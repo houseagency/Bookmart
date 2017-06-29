@@ -4,7 +4,8 @@
 
 const server = require('express')();
 const bodyParser = require('body-parser');
-const { getBookmarts, addBookmart, deleteBookmart } = require('./handlers');
+const redis = require('./redis');
+const handler = new (require('./handlers'))(redis());
 
 /**
  * Resolvers
@@ -12,9 +13,9 @@ const { getBookmarts, addBookmart, deleteBookmart } = require('./handlers');
 
 server.use(bodyParser.text());
 
-server.get('/bookmarks', getBookmarts);
-server.post('/bookmarks/:name', addBookmart);
-server.delete('/bookmarks/:name', deleteBookmart);
+server.get('/bookmarks', handler.get);
+server.post('/bookmarks/:name', handler.add);
+server.delete('/bookmarks/:name', handler.remove);
 
 /**
  * Start server
